@@ -1,0 +1,10 @@
+{
+  "extends": "standard", //eslint遵循一定的标准去lint
+  "plugins": [
+    "html"  // 对vue里面的script代码也要执行eslint
+  ],
+  "parser": "babel-eslint", //用babel-eslint去解析
+  "rules": {
+    "no-new": "off" //允许使用new这个符号
+  }
+}

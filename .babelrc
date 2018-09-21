@@ -1,0 +1,10 @@
+{
+  "presets": [
+    "env",  //用process.env获取全局的环境参数
+    "stage-1"
+  ],
+  "plugins": [
+    "transform-vue-jsx",  //jsx开发模式
+    "syntax-dynamic-import"
+  ]
+}
