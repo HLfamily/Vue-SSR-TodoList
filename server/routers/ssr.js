@@ -5,7 +5,7 @@ const fs = require('fs')
 
 const serverRender = require('./server-render')
 
-const clientMainfest = require('../../dist/vue-ssr-client-manifest.json')
+const clientManifest = require('../../dist/vue-ssr-client-manifest.json')
 const renderer = VueServerRender
   .createBundleRenderer(
     path.join(__dirname,
@@ -13,7 +13,7 @@ const renderer = VueServerRender
     ),
     {
       inject: false,
-      clientMainfest
+      clientManifest
     }
   )
 

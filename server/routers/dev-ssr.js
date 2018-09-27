@@ -56,7 +56,7 @@ const handleSSR = async(ctx) => {
   )
 
   // webpackDevServer提供给我们的一个json文件里面是静态文件资源的地址
-  const clientMainfest = clientManifestResp.data
+  const clientManifest = clientManifestResp.data
 
   // ejs模板渲染引擎生成html
   const template = fs.readFileSync(
@@ -73,7 +73,7 @@ const handleSSR = async(ctx) => {
   const renderer = VueServerRenderer
     .createBundleRenderer(bundle, {
       inject: false,
-      clientMainfest
+      clientManifest
     })
 
   await serverRender(ctx, renderer, template)
