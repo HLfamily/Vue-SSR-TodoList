@@ -15,9 +15,17 @@ const VueServerPlugin = require('vue-server-renderer/server-plugin')
 //   })
 // ]
 
-// const isDev = process.env.NODE_ENV === 'development'
-
 let config
+
+const plugins = [
+  new ExtractPlugin('styles.[contentHash:8].css'),
+  new webpack.DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    'process.env.VUE_ENV': '"server"'
+    // 官方建议做的在server-render里面会用到这个属性
+  }),
+  new VueServerPlugin()
+]
 
 config = merge(baseConfig,{
   target: 'node', // 指定打包出来的代码的运行环境
@@ -28,7 +36,7 @@ config = merge(baseConfig,{
     // 规定打包出来的代码是通过module.export给放出去
     libraryTarget: 'commonjs2',
     filename: 'server-entry.js',
-    path: path.join(__dirname, '../server-build')
+    path: path.join(__dirname, '../server-build'),
   },
   // 应用真正跑起来的时候不需要devdependience里面这些工具型的东西,只有在执行打包的时候才需要
   // 这些文件是不需要被打包的
@@ -53,15 +61,7 @@ config = merge(baseConfig,{
       }
     ]
   },
-  plugins: [
-    new ExtractPlugin('styles.[contentHash:8].css'),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-      'process.env.VUE_ENV': '"server"'
-      // 官方建议做的在server-render里面会用到这个属性
-    }),
-    new VueServerPlugin()
-  ]
+  plugins
 })
 
 module.exports = config

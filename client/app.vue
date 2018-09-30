@@ -6,8 +6,10 @@
     <!--<p>{{textA}}{{textPlus}}{{textC}}</p>-->
     <!--<router-link :to="{name: 'app'}">app</router-link>-->
     <!--<router-link to="/app/123">app</router-link>-->
-    <router-link to="/app">app</router-link>
-    <router-link to="/login">login</router-link>
+    <div class="router">
+      <router-link to="/app">app</router-link>
+      <router-link to="/login">login</router-link>
+    </div>
     <!--<router-link to="/login/exact">login exact</router-link>-->
     <!--<todo></todo>-->
     <transition name="fade">
@@ -114,6 +116,11 @@ export default {
   background-color #999
   opacity .9
   z-index -1
+}
+.router{
+  color #fff
+  width 100px
+  margin 10px auto
 }
 </style>
 

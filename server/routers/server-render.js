@@ -22,7 +22,6 @@ module.exports = async (ctx, renderer, template) => {
       appString,
       style: context.renderStyles(),
       scripts: context.renderScripts(),
-      // scripts: js,
       title: title.text()
     })
 
