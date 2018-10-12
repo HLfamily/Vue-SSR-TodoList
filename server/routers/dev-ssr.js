@@ -11,7 +11,7 @@ const webpack = require('webpack')
 const VueServerRenderer = require('vue-server-renderer')
 
 const serverRender = require('./server-render')
-//
+
 const serverConfig = require('../../build/webpack.config.server')
 
 // serverCompiler会生成一个server bundle, 也就是服务端的app.js, 当node server获取到 server bundle

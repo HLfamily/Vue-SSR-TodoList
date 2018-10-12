@@ -96,3 +96,39 @@ Vue.js构建客户端应用程序时, 默认情况下是在浏览器中输出Vue
 服务器渲染： 指的是用后端语言通过一些模板引擎生成的html,将数据与视图整理输出为完整的html文档发送给浏览器
 
 SSR是一份代码运行在两个环境里面(服务端, 客户端) 服务端先运行好之后,把模板渲染成html页面,然后返回给前端,前端在载入js文件
+
+
+npm i sha1 -S 安装后生成签名让db调用的
+npm i koa-body -S 安装处理post请求中body参数的中间件
+npm i koa-session -S 安装koa中间件session的中间件
+
+session工作原理: 当登陆成功之后,会把session.user的
+内容写到session webtoken里面, 给数据加签名, 用sha1签名, 类似于token的验证逻辑
+
+当开启服务端的时候会遇上的错是：
+ UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 2): ReferenceError: regeneratorRuntime is not defined
+ 解决办法，重新配置.babelrc文件将“env”从presents里面单独列出来
+
+ 正式环境打包的时候，对于不同的router路由导向的vue文件生成的js是0.hash.js, 1.hash.js等等,
+ 需要生成出来的chunk.js是带名字的时候需要加上NamedchunksPlugin()
+
+ 项目部署问题
+ 使用PM2进行一个项目的部署, nodejs专用的服务进程管理工具
+ 写好配置文件之后通过
+ npm install pm2 -g // 全局安装
+ pm2 start pm2.yml --env production
+ 重启项目: pm2 restart vue-todo(声明的时候起的名字)
+ 停掉项目: pm2 stop vue-todo(声明的时候起的名字)
+ 查看所有pm2启动起来的服务: pm2 list
+ 查看所有pm2启动起来的log日志： pm2 log vue-todo
+ ssh root@jocky.me // 直接通过ssh连接到自己的本地服务器
+ 注意配置Ngnix服务器监听80端口
+
+ ---静态资源上传到CDN
+ npm i qiniu -D
+ 在build下面新建upload的一个js文件,直接在package.json里面添加上传命令
+ 这个命令需要在:npm run build:client 和 npm run build:server后面跟着去执行
+ 上传
+ 切记host加'/'上传
+
+

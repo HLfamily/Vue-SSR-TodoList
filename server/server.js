@@ -1,10 +1,25 @@
 const Koa = require('koa')
 const send = require('koa-send')
 const path = require('path')
+const koaBody = require('koa-body')
+const koaSession = require('koa-session')
 
 const staticRouter = require('./routers/static')
+const apiRouter = require('./routers/api')
+const userRouter = require('./routers/user')
+const createDb = require('./db/db')
+const config = require('../app.config')
+
+const db =  createDb(config.db.appId, config.db.appKey)
 
 const app = new Koa()
+
+// 设置session的设置
+app.keys = ['vue ssr tech']
+app.use(koaSession({
+  key: "v-ssr-id",
+  maxAge: 2 * 60 * 60 * 1000
+}, app))
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -32,13 +47,26 @@ app.use(async (ctx, next) => {
   }
 })
 
+//中间件处理db的问题
+app.use(async (ctx, next) => {
+  ctx.db = db
+  await next()
+})
+
+// 安装中间件
+app.use(koaBody())
+app.use(userRouter.routes()).use(userRouter.allowedMethods())
 app.use(staticRouter.routes()).use(staticRouter.allowedMethods())
+// api router 以/api/开头的路由都会到app router里面去处理
+app.use(apiRouter.routes()).use(apiRouter.allowedMethods())
 
 let pageRouter
 if (isDev) {
+  // pageRouter = require('./routers/dev-ssr')
   pageRouter = require('./routers/dev-ssr')
 } else {
-  pageRouter = require('./routers/ssr')
+  // pageRouter = require('./routers/ssr')
+  pageRouter = require('./routers/ssr-no-bundle')
 }
 
 // pageRouter.routes()是个function查看路由组件的匹配与否

@@ -6,6 +6,8 @@ const merge = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
 // 这个插件能帮我们单独生成一个json文件, 在vue的服务端渲染里面能帮助我们处理一些很复杂的逻辑
 const VueServerPlugin = require('vue-server-renderer/server-plugin')
+// const VueServerPlugin = require('vue-server-renderer/server-plugin')
+// no bundle 的时候不用这个
 
 // const defaultPlugins =  [
 //   new webpack.DefinePlugin({
@@ -17,15 +19,24 @@ const VueServerPlugin = require('vue-server-renderer/server-plugin')
 
 let config
 
+const isDev = process.env.NODE_ENV === 'development'
+
 const plugins = [
   new ExtractPlugin('styles.[contentHash:8].css'),
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
     'process.env.VUE_ENV': '"server"'
     // 官方建议做的在server-render里面会用到这个属性
-  }),
-  new VueServerPlugin()
+  })
 ]
+
+if (isDev) {
+  // no bundle 的时候不用这个
+  // new VueServerPlugin()
+  plugins.push(
+    new VueServerPlugin()
+  )
+}
 
 config = merge(baseConfig,{
   target: 'node', // 指定打包出来的代码的运行环境
@@ -63,5 +74,11 @@ config = merge(baseConfig,{
   },
   plugins
 })
+
+config.resolve = {
+  alias: {
+    'model': path.join(__dirname, '../client/model/server-model.js')
+  }
+}
 
 module.exports = config

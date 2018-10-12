@@ -5,6 +5,8 @@ const merge = require('webpack-merge')
 const ExtractPlugin = require('extract-text-webpack-plugin')
 const baseConfig = require('./webpack.config.base')
 const VueClientPlugin = require('vue-server-renderer/client-plugin')
+// cdn打包的时候需要引入的文件
+// const cdnConfig =  require('../app.config').cdn
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -26,9 +28,15 @@ const devServer = {
   overlay: {
     errors: true,
   },
+  headers: { 'Access-Control-Allow-Origin': '*' }, // 解决热更替的update-host.json文件跨域获取的问题
   historyApiFallback: {
     index: '/index.html' //dist生成目录或者htmlplugin生成的目录下面的html文件
   }, //防止刷新后显示找不到路由对应的页面
+  // 获取todos列表的时候在前端渲染的时候需要用8000端口请求3333端口去获取所有的todo数据,需要配置代理
+  proxy: {
+    '/api': 'http://127.0.0.1:3333',
+    '/user': 'http://127.0.0.1:3333',
+  },
   hot: true
 }
 let config
@@ -77,6 +85,7 @@ if (isDev) {
     output: {
       filename: '[name].[chunkhash:8].js',
       publicPath: '/dist/'
+      // publicPath: cdnConfig.host // cdn打包的问题
     },
     module: {
       rules: [
@@ -105,9 +114,16 @@ if (isDev) {
       }),
       new webpack.optimize.CommonsChunkPlugin({
         name: 'runtime'
-      })
+      }),
+      new webpack.NamedChunksPlugin()
     ])
   })
+}
+
+config.resolve = {
+  alias: {
+    'model': path.join(__dirname, '../client/model/client-model.js')
+  }
 }
 
 module.exports = config

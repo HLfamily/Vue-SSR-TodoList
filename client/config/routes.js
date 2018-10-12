@@ -13,7 +13,8 @@ export default [
     //   id: route.query.b
     // }),
     path: '/app',
-    component: () => import('../views/todo/todo.vue'), // 作为todo的props给传进来
+    component: () => import(/* webpackChunkName: "todo-view" */ '../views/todo/todo.vue'), // 作为todo的props给传进来
+    // component: Todo,
     // components: {
     //   default: Todo,
     //   a: Login
@@ -36,7 +37,8 @@ export default [
   },
   {
     path: '/login',
-    component: () => import('../views/login/login.vue')
+    component: () => import(/* webpackChunkName: "login-view" */ '../views/login/login.vue')
+    // component: Login
     // components: {
     //   default: Login,
     //   a: Todo

@@ -1,22 +1,45 @@
 <template>
   <section class="real-app">
+    <div class="tab-container">
+      <tabs :value="filter" @change="handleChangeTab">
+        <tab :label="tab" :index="tab" v-for="tab in states" :key="tab">
+
+        </tab>
+        <!--<tab label="tab1" index="1">-->
+          <!--&lt;!&ndash;<span>tab content 1 {{mesg}}</span>&ndash;&gt;-->
+        <!--</tab>-->
+        <!--<tab index="2">-->
+          <!--<span slot="label" style="color: red;">tab2</span>-->
+          <!--&lt;!&ndash;<span>tab content 2</span>&ndash;&gt;-->
+        <!--</tab>-->
+        <!--<tab label="tab3" index="3">-->
+          <!--&lt;!&ndash;<span>tab content 3</span>&ndash;&gt;-->
+        <!--</tab>-->
+      </tabs>
+    </div>
     <input
       type="text"
       class="add-input"
       autofocus="autofocus"
       placeholder="接下去要做什么？"
-      @keyup.enter="addTodo"
+      @keyup.enter="handleAdd"
     >
     <item
       :todo="todo"
       v-for="todo in filteredTodos"
       :key="todo.id"
       @del="deleteTodo"
+      @toggle="toggleTodoState"
     />
-    <tabs
+    <!--<Helper-->
+      <!--:filter="filter"-->
+      <!--:todos="todos"-->
+      <!--@toggle="toggleFilter"-->
+      <!--@clearAllCompleted="clearAllCompleted"-->
+    <!--/>-->
+    <Helper
       :filter="filter"
       :todos="todos"
-      @toggle="toggleFilter"
       @clearAllCompleted="clearAllCompleted"
     />
     <!--<router-view></router-view>-->
@@ -24,9 +47,12 @@
 </template>
 
 <script>
+import {
+  mapState, mapActions
+} from 'vuex'
 import Item from './item.vue'
-import Tabs from './tabs.vue'
-let id = 0
+import Helper from './helper.vue'
+// let id = 0
 export default {
   // props: ['id'],
   // beforeRouteEnter (to, from, next) {
@@ -50,15 +76,18 @@ export default {
   },
   data () {
     return {
-      todos: [],
-      filter: 'all'
+      // todos: [],
+      filter: 'all',
+      // tabValue: '1',
+      states: ['all', 'active', 'completed']
     }
   },
   components: {
     Item,
-    Tabs
+    Helper
   },
   computed: {
+    ...mapState(['todos']),
     filteredTodos () {
       if (this.filter === 'all') {
         return this.todos
@@ -67,27 +96,69 @@ export default {
       return this.todos.filter(todo => completed === todo.completed)
     }
   },
+  asyncData ({ store, router }) {
+    if (store.state.user) {
+      return store.dispatch('fetchTodos')
+    }
+    router.replace('/login')
+    return Promise.resolve()
+    // return new Promise((resolve) => {
+    //   setTimeout(() => {
+    //     resolve(1243)
+    //   }, 1000)
+    // })
+  },
   mounted () {
+    if (this.todos && this.todos.length < 1) {
+      this.fetchTodos()
+    }
     // console.log(this.id)
     // console.log('todo mounted') // 不管路径是否相同,只要都指向了这个.vue那么它只会被初始化一次,就是它第一次出来的时候会调用mounted钩子
   },
   methods: {
-    addTodo (e) {
-      this.todos.unshift({
-        id: id++,
-        content: e.target.value.trim(),
+    ...mapActions([
+      'fetchTodos',
+      'addTodo',
+      'deleteTodo',
+      'updateTodo',
+      'deleteAllCompleted'
+    ]),
+    handleAdd (e) {
+      const content = e.target.value.trim()
+      if (!content) {
+        this.$notify({
+          content: '必须输入要做的内容'
+        })
+        return
+      }
+      const todo = {
+        content,
         completed: false
-      })
+      }
+      this.addTodo(todo)
       e.target.value = ''
     },
-    deleteTodo (id) {
-      this.todos.splice(this.todos.findIndex(todo => todo.id === id), 1)
-    },
-    toggleFilter (state) {
-      this.filter = state
+    // deleteTodo (id) {
+    //   this.todos.splice(this.todos.findIndex(todo => todo.id === id), 1)
+    // },
+    // toggleFilter (state) {
+    //   this.filter = state
+    // },
+    toggleTodoState (todo) {
+      this.updateTodo({
+        id: todo.id,
+        todo: Object.assign({}, todo, {
+          completed: !todo.completed
+        })
+      })
     },
     clearAllCompleted () {
-      this.todos = this.todos.filter(todo => !todo.completed)
+      this.deleteAllCompleted()
+      // this.todos = this.todos.filter(todo => !todo.completed)
+    },
+    handleChangeTab (value) {
+      // this.tabValue = value
+      this.filter = value
     }
   }
 }
@@ -119,6 +190,9 @@ export default {
   border: none;
   box-shadow: inset 0 -2px 1px rgba(0,0,0,0.03);
 }
+.tab-container
+  background-color #fff
+  padding 0 15px
 </style>
 
 
