@@ -1,4 +1,5 @@
 <script>
+    // 切记不能有template标签,否则渲染不出来, 渲染为空
     import TabContainer from './tab-container.vue'
 
     export default {

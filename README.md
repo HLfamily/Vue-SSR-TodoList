@@ -131,4 +131,21 @@ session工作原理: 当登陆成功之后,会把session.user的
  上传
  切记host加'/'上传
 
+ ```
+ cdn 是 content delivery network就是一个 内容的分发网络，它的主要用法就是内容存储
+ 和分发技术 举个例子就是如果你的你的项目放到了服务器，那如果你们自己公司的服务器只有一
+ 台，你们自己维护的话 你在华东地区 那华南地区的人访问速度就会大大减缓 但是用cdn的话
+ 你把你打包好的项目代码全部上传到（用七牛cdn距离子的话）七牛的cdn存储空间，七牛的cdn
+ 会给你一个域名，这个域名你也可以自己购买特定的名字的, 或者用他们给的 七牛云会把你上
+ 传的项目文件扩散到他们的各个区域中去，然后你通过这个域名去访问你的项目的时候，他会
+ 就近给你返回离你最近的内容
+ cdn拦截就是网络不安全,内容被某些代理服务器劫持了 这个就是https签名文件加密的情况了
+
+ ```
+ npm i module_name -S => npm i module_name --save => 写入到 dependencies 对象
+ npm i module_name -D => npm i module_name --save-dev => 写入到 devDependencies 对象
+ npm i module_name -G  全局安装
+
+ ```
+
 
